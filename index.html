@@ -1,0 +1,38 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Pattern lock demo</title>
+		<!-- Include jQuery via CDN -->
+		<link type="text/css" rel="stylesheet" href="index.css">
+		<script src="pattern-lock.js"></script>
+		<!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
+	</head>
+	<body>
+		<div id="gradient-border">
+			<div id="main-wrapper">
+				<div id="content">
+					<h2 class="rainbow-text">Pattern Lock</h2>
+					<div id="selection">
+						<div id="shapes">
+							<img height="40px" width="40px">
+							<img height="40px" width="40px">
+							<img height="40px" width="40px">
+						</div>
+					</div>
+					<div id="pattern-table">
+						<!-- contents will be added by script -->
+						<script>makeGrid(3, 3)</script>
+					</div>
+					
+				</div>
+				<footer>
+					<span>Michal Martínek 2025</span>
+					&nbsp;
+					<!-- <span id="links">
+						<a href="https://github.com/Michal-Martinek"><b>GitHub</b></a>
+					</span> -->
+				</footer>
+			</div>
+		</div>
+	</body>
+</html>
