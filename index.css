@@ -92,6 +92,11 @@ footer {
 .dot-div:hover {
 	cursor: pointer;
 }
+.dot-div.selected {
+	/* background-color: #222; */
+	width: 10%;
+	height: 10%;
+}
 .dot-div div {
 	width: 100%;
 	min-width: 2px;
