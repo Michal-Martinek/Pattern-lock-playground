@@ -30,6 +30,9 @@ class PatternLock {
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
+		const canvas = this.getCanvas();
+		const ctx = canvas.getContext('2d');
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
 	destroy() {
 		this._detachEvents();
@@ -51,6 +54,7 @@ class PatternLock {
 	selectDot(dot) {
 		dot.classList.add('selected');
 		this.selected.push(dot)
+		this.drawLines();
 	}
 	isSelected(dot) {
 		return dot.classList.contains('selected');
@@ -112,7 +116,7 @@ class PatternLock {
 	}
 
 	makeGrid() {
-		let t = document.querySelector('#pattern-table');
+		let t = document.querySelector('#pattern-table #dynamic-dots');
 		t.innerHTML = `<div class="lock-row"></div>`.repeat(this.rows);
 		let row = 0;
 		t.childNodes.forEach(node => {
@@ -132,7 +136,33 @@ class PatternLock {
 				width: ${100 / this.cols}%;
 			}		
 		</style>`;
-		// <div id="lines" style="width: 100%;"></div>`;
+		this.drawLines();
+	};
+	
+	// drawing --------------------------------------
+	getCanvas() {
+		return document.getElementById("lines");
+	}
+	getDotFractPos(dot) {
+		var containerRect = document.getElementById('dynamic-dots').getBoundingClientRect();
+		let dotR = dot.getBoundingClientRect();
+		var offsetX = dotR.left + dotR.width / 2 - containerRect.left;
+		var offsetY = dotR.top + dotR.height / 2 - containerRect.top;
+		let scale = this.getCanvas().width / containerRect.width; // NOTE canvas buffer has fixed size, only the container stretches
+		return [offsetX * scale, offsetY * scale];
+	}
+	drawLines() {
+		const ctx = this.getCanvas().getContext("2d");
+		if (this.selected.length >= 2) {
+			ctx.strokeStyle = "black";
+			ctx.lineWidth = 4;
+			ctx.beginPath();
+			let pos = this.getDotFractPos(this.selected[this.selected.length - 2]);
+			ctx.moveTo(...pos);
+			pos = this.getDotFractPos(this.selected[this.selected.length - 1]);
+			ctx.lineTo(...pos);
+			ctx.stroke();
+		}
 	};
 };
 

@@ -110,7 +110,6 @@ footer {
 	position: relative;
 	width: 60%;
 	aspect-ratio: 1;
-	padding: 6px;
 	margin: 15px;
 	margin-top: 4vh;
 	/* border: 1px solid #000; */
@@ -119,6 +118,13 @@ footer {
 }
 #pattern-table::after {
 	border-radius: 13px;
+}
+canvas#lines {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
 }
 
 .lock-row {
