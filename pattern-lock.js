@@ -8,6 +8,8 @@ class PatternLock {
 		this.selected = []; // array of dots
 		this._drawing  = false;
 		this._attachEvents();
+
+		this.resultSpan = document.getElementById('pattern-result');
 	}
 
 	_attachEvents() {
@@ -41,7 +43,8 @@ class PatternLock {
 
 	// dot interface -----------------------------------------
 	getDotDesc(dot) {
-		return dot.getAttribute('row') + ':' + dot.getAttribute('col');
+		const alphabet = "ABCDEFGIJKLMNOPQRSTUVWXYZ";
+		return alphabet[dot.getAttribute('row')] + dot.getAttribute('col');
 	}
 	printDot(dot) {
 		console.log(this.getDotDesc(dot));
@@ -60,32 +63,27 @@ class PatternLock {
 		return dot.classList.contains('selected');
 		// maybe selected.contains(dot)?
 	}
+	addDot(dot) {
+		this.selectDot(dot);
+		this.printDot(dot)
+		this.addResult(this.getDotDesc(dot));
+	}
 
 	// events ----------------------------
 	mouseDown(e) {
 		let dot = this.getHitDot(e.clientX, e.clientY);
 		if (dot) {
 			this.reset();
+			this.resultSpan.innerHTML = "";
 			this._drawing = true;
-			this.selectDot(dot);
-			this.printDot(dot)
+			this.addDot(dot);
 		}
 	}
 	mouseMove(e) {
 		if (!this._drawing) return;
 		let dot = this.getHitDot(e.clientX, e.clientY);
 		if (dot && !this.isSelected(dot)) {
-			this.selectDot(dot);
-			this.printDot(dot)
-
-			// let line = document.createElement('div');
-			// line.classList.add('line');
-			// line.classList.add('segment-width');
-			// line.style.left = center[0];
-			// line.style.top = center[1] - 4;
-
-			// this.container.appendChild(line);
-
+			this.addDot(dot);
 		}
 	}
 	mouseUp(e) {
@@ -164,6 +162,29 @@ class PatternLock {
 			ctx.stroke();
 		}
 	};
+
+	addResult(str) {
+		let resultsContainer = document.getElementById('results');
+		let first = this.resultSpan.innerHTML.length == 0;
+		let addContent = `<span class="dot-repr">${str}</span>`
+		if (!first) {
+			addContent = '<span class="colon">:</span>' + addContent;
+		}
+		this.resultSpan.innerHTML += addContent;
+		if (first) {
+			// resultsContainer.style.transition = "width 1s ease-out";
+			resultsContainer.style.width = 'auto';
+			return;
+		}
+		
+		const currWidth = resultsContainer.offsetWidth;
+		console.log('currWidth', currWidth);
+		resultsContainer.style.width = currWidth + "px";
+		resultsContainer.offsetWidth; // essential line? - forces a reflow
+		// Let the browser calculate the new width
+		resultsContainer.style.transition = "width 0.5s ease";
+		resultsContainer.style.width = resultsContainer.scrollWidth - 20 + "px";
+	}
 };
 
 addEventListener("DOMContentLoaded", (event) => {
