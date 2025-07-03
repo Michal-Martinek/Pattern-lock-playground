@@ -226,6 +226,12 @@ canvas#lines {
 #pattern-result {
 	min-width: 3ch;
 	display: inline-block;
+	cursor: pointer;
+	transition: color 2s ease-in;
+}
+#pattern-result.copied {
+	color: green;
+	transition: none;
 }
 #pattern-result span {
 	display: inline-block;
@@ -249,10 +255,10 @@ canvas#lines {
 .dot-repr {
 	font-weight: bold;
 }
-/* .colon:last-child {
+.colon:nth-last-child(2) {
 	position: relative;
 	animation: forwards ease-out 0.8s fadeFromTop;
-} */
+}
 .dot-repr:last-child {
 	position: relative;
 	animation: forwards ease-out 1s fadeFromRight;

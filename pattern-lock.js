@@ -10,6 +10,7 @@ class PatternLock {
 		this._attachEvents();
 
 		this.resultSpan = document.getElementById('pattern-result');
+		this.resultSpan.onclick = () => this.copyPatternResult();
 	}
 
 	_attachEvents() {
@@ -29,12 +30,16 @@ class PatternLock {
 
 	reset() {
 		this.selected = []
+		this._drawing = true;
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
 		const canvas = this.getCanvas();
 		const ctx = canvas.getContext('2d');
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+		this.resultSpan.innerHTML = "";
+		this.resultSpan.classList.remove('copied');
 	}
 	destroy() {
 		this._detachEvents();
@@ -74,8 +79,6 @@ class PatternLock {
 		let dot = this.getHitDot(e.clientX, e.clientY);
 		if (dot) {
 			this.reset();
-			this.resultSpan.innerHTML = "";
-			this._drawing = true;
 			this.addDot(dot);
 		}
 	}
@@ -184,6 +187,15 @@ class PatternLock {
 		// Let the browser calculate the new width
 		resultsContainer.style.transition = "width 0.5s ease";
 		resultsContainer.style.width = resultsContainer.scrollWidth - 20 + "px";
+	}
+	copyPatternResult() {
+		let text = this.resultSpan.textContent;
+		console.log('Pattern copied:', text);
+		navigator.clipboard.writeText(text);
+		this.resultSpan.classList.add('copied');
+		setTimeout(() => {
+			this.resultSpan.classList.remove('copied');
+		}, 2000);
 	}
 };
 
