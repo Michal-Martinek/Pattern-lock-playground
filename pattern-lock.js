@@ -38,6 +38,14 @@ class PatternLock {
 		selected.classList.add('selected');
 		this.init(this.rows, shapeFunc);
 	}
+	changeSize(diff) {
+		let rows = this.rows + diff;
+		rows = Math.max(2, Math.min(7, rows));
+		if (rows != this.rows) {
+			document.querySelector('#size-number').innerHTML = rows;
+			this.init(rows, this.shapeFunc);
+		}
+	}
 
 	_attachEvents() {
 		this._downHandler = this.mouseDown.bind(this);
@@ -51,6 +59,8 @@ class PatternLock {
 		document.querySelectorAll('.shape').forEach((shape) => {
 			shape.onclick = () => this.selectShape(shape);
 		});
+		document.querySelector('#size #minus').onclick = () => this.changeSize(-1);
+		document.querySelector('#size #plus').onclick = () => this.changeSize(+1);
 	}
 	_detachEvents() {
 		this.container.removeEventListener('mousedown', this._downHandler);
