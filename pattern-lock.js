@@ -10,18 +10,33 @@ const shapeFuncs = {
 };
 
 class PatternLock {
-	constructor(container, rows, shapeFunc, dummy=false) {
+	constructor(container, rows, shapeFunc=shapeFuncs["square"], dummy=false) {
 		this.container  = container;
-		this.rows = rows;
-		this.shapeFunc = shapeFunc;
-
-		if (dummy) return;
-		this.selected = []; // array of dots
-		this._drawing  = false;
+		this.dummy = dummy
+		this.init(rows, shapeFunc);
+		if (this.dummy) return;
+		
 		this._attachEvents();
-
 		this.resultSpan = document.getElementById('pattern-result');
 		this.resultSpan.onclick = () => this.copyPatternResult();
+	}
+	init(rows, shapeFunc) {
+		this.rows = rows;
+		this.shapeFunc = shapeFunc;
+		
+		this.selected = []; // array of dots
+		this._drawing  = false;
+		this.makeGrid();
+		this._resetPeripherals(false)
+	}
+	selectShape(selected) {
+		const shapeFunc = shapeFuncs[selected.getAttribute('shape-func')];
+		if (shapeFunc == this.shapeFunc) return;
+		document.querySelectorAll('.shape').forEach((shape) => {
+			shape.classList.remove('selected');
+		})
+		selected.classList.add('selected');
+		this.init(this.rows, shapeFunc);
 	}
 
 	_attachEvents() {
@@ -32,6 +47,10 @@ class PatternLock {
 		this.container.addEventListener('mousemove', this._moveHandler);
 		this.container.addEventListener('mouseup',   this._upHandler);
 		// TODO support touch events
+
+		document.querySelectorAll('.shape').forEach((shape) => {
+			shape.onclick = () => this.selectShape(shape);
+		});
 	}
 	_detachEvents() {
 		this.container.removeEventListener('mousedown', this._downHandler);
@@ -40,17 +59,24 @@ class PatternLock {
 	}
 
 	reset() {
+		this._resetPeripherals();
 		this.selected = []
 		this._drawing = true;
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
-		const canvas = this.getCanvas();
-		const ctx = canvas.getContext('2d');
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-		this.resultSpan.innerHTML = "";
-		this.resultSpan.classList.remove('copied');
+	}
+	_resetPeripherals(results=true) {
+		try {
+			const canvas = this.getCanvas();
+			const ctx = canvas.getContext('2d');
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			if (results) {
+				this.resultSpan.innerHTML = "";
+				this.resultSpan.classList.remove('copied');
+			}
+		} catch {};
 	}
 	destroy() {
 		this._detachEvents();
@@ -127,19 +153,19 @@ class PatternLock {
 		return null;
 	}
 
-	_prepareDotsDiv(dummy) {
+	_prepareDotsDiv() {
 		let div = this.container.querySelector('.dynamic-dots');
 		if (div == null) {
-			let dummyClass = dummy ? "dummy-pattern" : "";
+			let dummyClass = this.dummy ? "dummy-pattern" : "";
 			this.container.innerHTML += `<div class="dynamic-dots ${dummyClass}"></div>`;
 			return this._prepareDotsDiv();
 		}
 		div.innerHTML = `<div class="lock-row"></div>`.repeat(this.rows);
 		return div;
 	}
-	makeGrid(dummy=false) {
+	makeGrid() {
 		let row = 0;
-		let div = this._prepareDotsDiv(dummy);
+		let div = this._prepareDotsDiv();
 		div.childNodes.forEach(node => {
 			let cols = this.shapeFunc(this.rows, row);
 			for (let col = 0; col < cols; col++) {
@@ -152,7 +178,6 @@ class PatternLock {
 			}
 			row++;
 		});
-		if (!dummy) this.drawLines();
 	};
 	
 	// drawing --------------------------------------
@@ -168,6 +193,7 @@ class PatternLock {
 		return [offsetX * scale, offsetY * scale];
 	}
 	drawLines() {
+		if (this.dummy) return; 
 		const ctx = this.getCanvas().getContext("2d");
 		if (this.selected.length >= 2) {
 			ctx.strokeStyle = "black";
@@ -212,10 +238,7 @@ class PatternLock {
 		}, 2000);
 	}
 };
-function createPatternLock(container, height, shapeFunc=shapeFuncs["square"], dummy=false) {
-	var lock = new PatternLock(container, height, shapeFunc, dummy);
-	lock.makeGrid(dummy);
-}
+
 addEventListener("DOMContentLoaded", (event) => {
-	createPatternLock(document.querySelector('#pattern-table'), 3);
+	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
 })
