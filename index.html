@@ -12,16 +12,25 @@
 			<div id="main-wrapper">
 				<div id="content">
 					<h1 class="rainbow-text">Pattern Lock</h1>
-					<!-- <div id="selection">
+					<div id="pattern-selection">
 						<div id="shapes">
-							<img height="40px" width="40px">
-							<img height="40px" width="40px">
-							<img height="40px" width="40px">
+							<div class="shape" shape-func="square"></div>
+							<div class="shape" shape-func="triangle"></div>
+							<div class="shape" shape-func="hex"></div>
+							<div class="shape" shape-func="rhombus"></div>
+							<div class="shape" shape-func="hourglass"></div>
+							
+							<script>
+								document.querySelectorAll('.shape').forEach((shape) => {
+									var shapeFunc = shape.getAttribute("shape-func");
+									createPatternLock(shape, 3, shapeFuncs[shapeFunc], true);
+								})
+							</script>
 						</div>
-					</div> -->
+					</div>
 					<div id="pattern-table" class="rotating-gradient-border">
 						<canvas id="lines" width="500" height="500"></canvas>
-						<div id="dynamic-dots">
+						<div class="dynamic-dots">
 							<!-- contents will be added by script -->
 						</div>
 					</div>

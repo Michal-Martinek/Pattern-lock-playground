@@ -1,10 +1,21 @@
 
-class PatternLock {
-	constructor(container, cols, rows) {
-		this.container  = container;
-		this.cols = cols;
-		this.rows = rows;
+// calculates number of dots in *row*-th row of total *rows* for given shape
+const shapeFuncs = {
+	"square":   (rows, row) => rows,
+	"triangle": (rows, row) => row + 1,
+	"triangle-upside-down": (rows, row) => rows - row,
+	"rhombus":  (rows, row) => Math.min(row + 1, rows - row),
+	"hex":      (rows, row) => Math.min(row + 1, rows - row) + 1,
+	"hourglass":(rows, row) => Math.max(row + 1, rows - row),
+};
 
+class PatternLock {
+	constructor(container, rows, shapeFunc, dummy=false) {
+		this.container  = container;
+		this.rows = rows;
+		this.shapeFunc = shapeFunc;
+
+		if (dummy) return;
 		this.selected = []; // array of dots
 		this._drawing  = false;
 		this._attachEvents();
@@ -116,28 +127,32 @@ class PatternLock {
 		return null;
 	}
 
-	makeGrid() {
-		let t = document.querySelector('#pattern-table #dynamic-dots');
-		t.innerHTML = `<div class="lock-row"></div>`.repeat(this.rows);
+	_prepareDotsDiv(dummy) {
+		let div = this.container.querySelector('.dynamic-dots');
+		if (div == null) {
+			let dummyClass = dummy ? "dummy-pattern" : "";
+			this.container.innerHTML += `<div class="dynamic-dots ${dummyClass}"></div>`;
+			return this._prepareDotsDiv();
+		}
+		div.innerHTML = `<div class="lock-row"></div>`.repeat(this.rows);
+		return div;
+	}
+	makeGrid(dummy=false) {
 		let row = 0;
-		t.childNodes.forEach(node => {
-			for (let col = 0; col < this.cols; col++) {
-				let idx = this.cols * row + col;
-				node.innerHTML += `<div class="lock-cell segment-width">
-					<div id="dot_${idx}" row="${row}" col="${col}" class="dot-div">
+		let div = this._prepareDotsDiv(dummy);
+		div.childNodes.forEach(node => {
+			let cols = this.shapeFunc(this.rows, row);
+			for (let col = 0; col < cols; col++) {
+				let idx = cols * row + col;
+				node.innerHTML += `<div class="lock-cell" style="width: ${100 / this.rows}%;">
+					<div row="${row}" col="${col}" class="dot-div dot_${idx}">
 						<div></div>
 					</div>
 				</div>`;
 			}
 			row++;
 		});
-		t.innerHTML += `
-		<style>
-			.segment-width {
-				width: ${100 / this.cols}%;
-			}		
-		</style>`;
-		this.drawLines();
+		if (!dummy) this.drawLines();
 	};
 	
 	// drawing --------------------------------------
@@ -145,7 +160,7 @@ class PatternLock {
 		return document.getElementById("lines");
 	}
 	getDotFractPos(dot) {
-		var containerRect = document.getElementById('dynamic-dots').getBoundingClientRect();
+		var containerRect = this.container.querySelector('.dynamic-dots').getBoundingClientRect();
 		let dotR = dot.getBoundingClientRect();
 		var offsetX = dotR.left + dotR.width / 2 - containerRect.left;
 		var offsetY = dotR.top + dotR.height / 2 - containerRect.top;
@@ -181,7 +196,6 @@ class PatternLock {
 		}
 		
 		const currWidth = resultsContainer.offsetWidth;
-		console.log('currWidth', currWidth);
 		resultsContainer.style.width = currWidth + "px";
 		resultsContainer.offsetWidth; // essential line? - forces a reflow
 		// Let the browser calculate the new width
@@ -190,7 +204,7 @@ class PatternLock {
 	}
 	copyPatternResult() {
 		let text = this.resultSpan.textContent;
-		console.log('Pattern copied:', text);
+		console.info('Pattern copied:', text);
 		navigator.clipboard.writeText(text);
 		this.resultSpan.classList.add('copied');
 		setTimeout(() => {
@@ -198,8 +212,10 @@ class PatternLock {
 		}, 2000);
 	}
 };
-
+function createPatternLock(container, height, shapeFunc=shapeFuncs["square"], dummy=false) {
+	var lock = new PatternLock(container, height, shapeFunc, dummy);
+	lock.makeGrid(dummy);
+}
 addEventListener("DOMContentLoaded", (event) => {
-	let lock = new PatternLock(document.querySelector('#pattern-table'), 3, 3);
-	lock.makeGrid();
+	createPatternLock(document.querySelector('#pattern-table'), 3);
 })

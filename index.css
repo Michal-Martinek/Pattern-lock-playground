@@ -105,6 +105,24 @@ footer {
 	background: linear-gradient(to right, red, yellow, red);
 	padding: 15px 0;
 }
+/* PATTERN SELECTION ---------------------------- */
+#shapes {
+	display: flex;
+	align-content: center;
+	/* max-width: 50%; */
+	flex-shrink: 2;
+	gap: 5px;
+	
+}
+.shape {
+	width: 30px;
+	aspect-ratio: 1;
+	/* display: inline-block; */
+	padding: 4px;
+	border-radius: 8px;
+	border: 2px solid blue;
+	color: blue;
+}
 
 /* --------------- */
 #pattern-table {
@@ -145,6 +163,11 @@ canvas#lines {
 	border-radius: 50%;
 	justify-self: center;
 }
+.dummy-pattern .dot-div {
+	padding: 0;
+	width: 50%;
+	height: 50%;
+}
 .dot-div:hover {
 	cursor: pointer;
 }
@@ -158,6 +181,9 @@ canvas#lines {
 	aspect-ratio: 1;
 	border-radius: 50%;
 	background-color: black;
+}
+.dummy-pattern .dot-div div {
+	background-color: blue;
 }
 
 /* results div ---------------- */
