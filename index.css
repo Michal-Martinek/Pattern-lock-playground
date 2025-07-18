@@ -165,7 +165,7 @@ footer {
 	padding-right: unset;
 	font-weight: bold;
 }
-#size-number {
+#size-box {
 	border-left:  blue 1.5px solid;
 	border-right: blue 1.5px solid;
 	width: 37%;
@@ -175,7 +175,7 @@ footer {
 /* --------------- */
 #pattern-table {
 	position: relative;
-	width: max(200px, 60%);
+	width: min(90vw, max(200px, 60%));
 	aspect-ratio: 1;
 	margin: max(25px, 4vw) 0;
 	/* border: 1px solid #000; */
@@ -201,7 +201,9 @@ canvas#lines {
 }
 .lock-cell {
 	aspect-ratio: 1;
-	align-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .dot-div {
 	width: 8%;
@@ -209,7 +211,6 @@ canvas#lines {
 	padding: 6px;
 	/* background-color: grey; */
 	border-radius: 50%;
-	justify-self: center;
 }
 .dummy-pattern .dot-div {
 	padding: 0;
@@ -242,6 +243,8 @@ canvas#lines {
 	padding: 8px;
 	margin-top: 15px;
 	max-width: 80%;
+	display: flex;
+	gap: .7ch;
 
 	text-align: left;
 	white-space: nowrap;
