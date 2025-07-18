@@ -42,7 +42,7 @@ a:hover {
 	
 	background: linear-gradient(red, orange, yellow); /* default background */
 	background: conic-gradient(from var(--angle), red, blue, green, yellow, orange, red);
-	animation: rotate 6s infinite linear;
+	animation: rotate var(--no-animations, 6s) infinite linear;
 }
 @keyframes glow {
 	from {
@@ -56,7 +56,21 @@ a:hover {
 	filter: blur(.8rem);
 	padding: 8px;
 	opacity: 0.8;
-	animation: glow 2.5s ease-in-out infinite alternate, rotate 6s infinite linear;
+	animation: glow var(--no-animations, 2.5s) ease-in-out infinite alternate, rotate var(--no-animations, 6s) infinite linear;
+}
+@media (prefers-reduced-motion) {
+	body {
+		--no-animations: 0s;
+	}
+}
+.disable-animations {
+	--no-animations: 0s;
+}
+button.toggle-anim {
+	font-size: .8rem;
+	background-color: rgba(255, 0, 106, 0.5);
+	color: rgb(52, 52, 52);
+	border-radius: 5px;
 }
 
 /* TOP LEVEL ELEMENTS ------------------------ */
@@ -304,9 +318,9 @@ canvas#lines {
 	filter: blur(3px);
 	background: black;
 	background: conic-gradient(from var(--angle), red, blue, green, yellow, orange, red);
-	animation: rotate 1s infinite linear reverse,
-		alternate 8s infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
-		orbit 5s infinite linear;
+	animation: rotate var(--no-animations, 1s) infinite linear reverse,
+		alternate var(--no-animations, 8s) infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
+		orbit var(--no-animations, 5s) infinite linear;
 }
 #pattern-result {
 	min-width: 3ch;
