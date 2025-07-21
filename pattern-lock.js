@@ -27,7 +27,7 @@ class PatternLock {
 		this.selected = []; // array of dots
 		this._drawing  = false;
 		this.makeGrid();
-		this._resetPeripherals(false)
+		this.resetGrid();
 	}
 	selectShape(selected) {
 		const shapeFunc = shapeFuncs[selected.getAttribute('shape-func')];
@@ -68,29 +68,27 @@ class PatternLock {
 		this.container.removeEventListener('mouseup',   this._upHandler);
 	}
 
-	reset() {
-		this._resetPeripherals();
+	resetGrid() {
+		this._resetCanvas();
 		this.selected = []
 		this._drawing = true;
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
 	}
-	_resetPeripherals(results=true) {
+	_resetCanvas() {
 		try {
 			const canvas = this.getCanvas();
 			const ctx = canvas.getContext('2d');
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			
-			if (results) {
-				this.resultSpan.innerHTML = "";
-				this.resultSpan.classList.remove('copied');
-			}
 		} catch {};
 	}
-	destroy() {
-		this._detachEvents();
-		this._reset();
+	_resetResults() {
+		if (results) {
+			this.resultSpan.innerHTML = "";
+			this.resultSpan.classList.remove('copied');
+		}
 	}
 
 	// dot interface -----------------------------------------
@@ -124,8 +122,9 @@ class PatternLock {
 	// events ----------------------------
 	mouseDown(e) {
 		let dot = this.getHitDot(e.clientX, e.clientY);
+		this.resetGrid();
 		if (dot) {
-			this.reset();
+			this._resetResults();
 			this.addDot(dot);
 		}
 	}
@@ -140,7 +139,6 @@ class PatternLock {
 		if (!this._drawing) return;
 		this._drawing = false;
 		this.printDots();
-		// this._reset();
 	}
 
 	
