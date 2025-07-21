@@ -11,8 +11,8 @@ const shapeFuncs = {
 
 class PatternLock {
 	constructor(container, rows, shapeFunc=shapeFuncs["square"], dummy=false) {
-		this.container  = container;
-		this.dummy = dummy
+		this.container = container;
+		this.dummy = dummy;
 		this.init(rows, shapeFunc);
 		if (this.dummy) return;
 		
@@ -38,13 +38,16 @@ class PatternLock {
 		selected.classList.add('selected');
 		this.init(this.rows, shapeFunc);
 	}
-	changeSize(diff) {
-		let rows = this.rows + diff;
-		rows = Math.max(2, Math.min(7, rows));
+	setSize(rows) {
 		if (rows != this.rows) {
 			document.querySelector('#size-number').innerHTML = rows;
 			this.init(rows, this.shapeFunc);
 		}
+	}
+	changeSize(diff) {
+		let rows = this.rows + diff;
+		rows = Math.max(2, Math.min(7, rows));
+		this.setSize(rows);
 	}
 
 	_attachEvents() {
@@ -236,5 +239,16 @@ class PatternLock {
 };
 
 addEventListener("DOMContentLoaded", (event) => {
+	const params = new URLSearchParams(window.location.search);
+
 	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
-})
+	const size = params.get('size');
+	if (size) lock.setSize(size);
+
+	const shape = params.get('shape');
+	if(shape && shapeFuncs[shape]) {
+		console.log('selecting shape:', shape)
+		const shapeE = document.querySelector(`div.shape[shape-func=${shape}]`);
+		shapeE.onclick();
+	}
+});

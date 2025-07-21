@@ -320,6 +320,9 @@ canvas#lines {
 		alternate var(--no-animations, 8s) infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
 		orbit var(--no-animations, 5s) infinite linear;
 }
+.disable-animations #results::after {
+	display: none;
+}
 .result-header {
 	font-weight: bold;
 }
