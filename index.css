@@ -261,11 +261,9 @@ canvas#lines {
 	padding: 8px;
 	margin-top: 15px;
 	max-width: 80%;
-	display: flex;
 	gap: .7ch;
 
 	text-align: left;
-	white-space: nowrap;
 	position: relative;
 }
 #results::before {
@@ -322,12 +320,15 @@ canvas#lines {
 		alternate var(--no-animations, 8s) infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
 		orbit var(--no-animations, 5s) infinite linear;
 }
+.result-header {
+	font-weight: bold;
+}
 #pattern-result {
 	min-width: 3ch;
 	display: inline-block;
 	cursor: pointer;
 	transition: color 2s ease-in;
-	text-wrap: wrap;
+	width: fit-content;
 }
 #pattern-result.copied {
 	color: green;

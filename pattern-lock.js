@@ -225,18 +225,6 @@ class PatternLock {
 			addContent = '<span class="colon">:</span>' + addContent;
 		}
 		this.resultSpan.innerHTML += addContent;
-		if (first) {
-			// resultsContainer.style.transition = "width 1s ease-out";
-			resultsContainer.style.width = 'auto';
-			return;
-		}
-		
-		const currWidth = resultsContainer.offsetWidth;
-		resultsContainer.style.width = currWidth + "px";
-		resultsContainer.offsetWidth; // essential line? - forces a reflow
-		// Let the browser calculate the new width
-		resultsContainer.style.transition = "width 0.5s ease";
-		resultsContainer.style.width = resultsContainer.scrollWidth - 20 + "px";
 	}
 	copyPatternResult() {
 		let text = this.resultSpan.textContent;
