@@ -54,10 +54,9 @@ class PatternLock {
 		this._downHandler = this.mouseDown.bind(this);
 		this._moveHandler = this.mouseMove.bind(this);
 		this._upHandler   = this.mouseUp.bind(this);
-		this.container.addEventListener('mousedown', this._downHandler);
-		this.container.addEventListener('mousemove', this._moveHandler);
-		this.container.addEventListener('mouseup',   this._upHandler);
-		// TODO support touch events
+		this.container.addEventListener('pointerdown', this._downHandler);
+		this.container.addEventListener('pointermove', this._moveHandler);
+		this.container.addEventListener('pointerup', this._upHandler);
 
 		document.querySelectorAll('.shape').forEach((shape) => {
 			shape.onclick = () => this.selectShape(shape);
@@ -66,15 +65,15 @@ class PatternLock {
 		document.querySelector('#size #plus').onclick = () => this.changeSize(+1);
 	}
 	_detachEvents() {
-		this.container.removeEventListener('mousedown', this._downHandler);
-		this.container.removeEventListener('mousemove', this._moveHandler);
-		this.container.removeEventListener('mouseup',   this._upHandler);
+		this.container.removeEventListener('pointerdown', this._downHandler);
+		this.container.removeEventListener('pointermove', this._moveHandler);
+		this.container.removeEventListener('pointerup',   this._upHandler);
 	}
 
 	resetGrid() {
 		this._resetCanvas();
 		this.selected = []
-		this._drawing = true;
+		this._drawing = false;
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
@@ -126,6 +125,7 @@ class PatternLock {
 	mouseDown(e) {
 		let dot = this.getHitDot(e.clientX, e.clientY);
 		this.resetGrid();
+		this._drawing = dot != null;
 		if (dot) {
 			this._resetResults();
 			this.addDot(dot);

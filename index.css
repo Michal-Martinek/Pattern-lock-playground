@@ -149,6 +149,7 @@ footer {
 	justify-content: left;
 	flex-direction: row;
 	gap: clamp(5px, 3vw, 40px);
+	touch-action: manipulation;
 }
 #shapes {
 	display: flex;
@@ -196,7 +197,7 @@ footer {
 	width: min(90vw, max(200px, 60%));
 	aspect-ratio: 1;
 	margin: max(25px, 4vw) 0;
-	/* border: 1px solid #000; */
+	touch-action: none;
 	border-radius: 8px;
 	background-color: #ddd;
 }
@@ -224,9 +225,9 @@ canvas#lines {
 	justify-content: center;
 }
 .dot-div {
-	width: 8%;
-	height: 8%;
-	padding: 6px;
+	width: 8%; /* inner dot size */
+	padding: min(3vw, 30%); /* outer "click margin" */
+	aspect-ratio: 1;
 	/* background-color: grey; */
 	border-radius: 50%;
 }
@@ -238,7 +239,7 @@ canvas#lines {
 .dot-div:hover {
 	cursor: pointer;
 }
-.dot-div.selected {
+.dot-div.selected div {
 	transform: scale(1.3);
 	transition: .2s;
 }
