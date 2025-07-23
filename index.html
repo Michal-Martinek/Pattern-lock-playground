@@ -1,7 +1,8 @@
-<html>
+<html lang="en-US">
 	<head>
 		<meta charset="UTF-8">
-		<title>Pattern lock demo</title>
+		<title>Pattern lock playground</title>
+		<link rel="icon" href="./favicon.svg">
 		<!-- Include jQuery via CDN -->
 		<link type="text/css" rel="stylesheet" href="index.css">
 		<script src="pattern-lock.js"></script>
@@ -11,11 +12,11 @@
 		<div id="gradient-border">
 			<div id="main-wrapper">
 				<div id="content">
-					<h1 class="rainbow-text">Pattern Lock</h1>
+					<h1 class="rainbow-text">Pattern lock playground</h1>
 					<div id="pattern-selection">
 						<div id="size">
 							<div id="minus" style="scale: 1.2; width: 1ch;">-</div>
-							<div id="size-number">3</div>
+							<div id="size-box"><div id="size-number">3</div></div>
 							<div id="plus">+</div>
 						</div>
 						<div id="shapes">
@@ -40,17 +41,17 @@
 						</div>
 					</div>
 					<div id="results">
-						<span><b class="white-outline">Pattern:</b></span>
+						<span class="result-header white-outline">Pattern:</span>
 						<span id="pattern-result"></span>
 					</div>
 
 				</div>
 				<footer>
+					<img id="footer-icon" src="favicon.svg" alt="icon">
 					<span>Michal Martínek 2025</span>
-					&nbsp;
-					<!-- <span id="links">
-						<a href="https://github.com/Michal-Martinek"><b>GitHub</b></a>
-					</span> -->
+					<button class="toggle-anim" type="button"
+						onclick="document.documentElement.classList.toggle('disable-animations')"
+					>Animations</button>
 				</footer>
 			</div>
 		</div>

@@ -1,0 +1,33 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Rainbow linear gradient -->
+    <linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="red" />
+      <stop offset="16%" stop-color="orange" />
+      <stop offset="33%" stop-color="yellow" />
+      <stop offset="50%" stop-color="green" />
+      <stop offset="66%" stop-color="blue" />
+      <stop offset="83%" stop-color="indigo" />
+      <stop offset="100%" stop-color="violet" />
+    </linearGradient>
+  </defs>
+
+  <!-- Rainbow border (slightly larger rounded rectangle) -->
+  <rect x="0" y="0" width="200" height="200" rx="30" ry="30" fill="url(#rainbow)" />
+
+  <!-- Inner black background -->
+  <rect x="10" y="10" width="180" height="180" rx="25" ry="25" fill="black" />
+
+  <!-- White dots in a 3x3 grid -->
+  <circle cx="50" cy="50" r="10" fill="white" />
+  <circle cx="100" cy="50" r="10" fill="white" />
+  <circle cx="150" cy="50" r="10" fill="white" />
+
+  <circle cx="50" cy="100" r="10" fill="white" />
+  <circle cx="100" cy="100" r="10" fill="white" />
+  <circle cx="150" cy="100" r="10" fill="white" />
+
+  <circle cx="50" cy="150" r="10" fill="white" />
+  <circle cx="100" cy="150" r="10" fill="white" />
+  <circle cx="150" cy="150" r="10" fill="white" />
+</svg>

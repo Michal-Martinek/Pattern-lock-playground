@@ -11,8 +11,8 @@ const shapeFuncs = {
 
 class PatternLock {
 	constructor(container, rows, shapeFunc=shapeFuncs["square"], dummy=false) {
-		this.container  = container;
-		this.dummy = dummy
+		this.container = container;
+		this.dummy = dummy;
 		this.init(rows, shapeFunc);
 		if (this.dummy) return;
 		
@@ -27,7 +27,7 @@ class PatternLock {
 		this.selected = []; // array of dots
 		this._drawing  = false;
 		this.makeGrid();
-		this._resetPeripherals(false)
+		this.resetGrid();
 	}
 	selectShape(selected) {
 		const shapeFunc = shapeFuncs[selected.getAttribute('shape-func')];
@@ -38,23 +38,25 @@ class PatternLock {
 		selected.classList.add('selected');
 		this.init(this.rows, shapeFunc);
 	}
-	changeSize(diff) {
-		let rows = this.rows + diff;
-		rows = Math.max(2, Math.min(7, rows));
+	setSize(rows) {
 		if (rows != this.rows) {
 			document.querySelector('#size-number').innerHTML = rows;
 			this.init(rows, this.shapeFunc);
 		}
+	}
+	changeSize(diff) {
+		let rows = this.rows + diff;
+		rows = Math.max(2, Math.min(7, rows));
+		this.setSize(rows);
 	}
 
 	_attachEvents() {
 		this._downHandler = this.mouseDown.bind(this);
 		this._moveHandler = this.mouseMove.bind(this);
 		this._upHandler   = this.mouseUp.bind(this);
-		this.container.addEventListener('mousedown', this._downHandler);
-		this.container.addEventListener('mousemove', this._moveHandler);
-		this.container.addEventListener('mouseup',   this._upHandler);
-		// TODO support touch events
+		this.container.addEventListener('pointerdown', this._downHandler);
+		this.container.addEventListener('pointermove', this._moveHandler);
+		this.container.addEventListener('pointerup', this._upHandler);
 
 		document.querySelectorAll('.shape').forEach((shape) => {
 			shape.onclick = () => this.selectShape(shape);
@@ -63,34 +65,32 @@ class PatternLock {
 		document.querySelector('#size #plus').onclick = () => this.changeSize(+1);
 	}
 	_detachEvents() {
-		this.container.removeEventListener('mousedown', this._downHandler);
-		this.container.removeEventListener('mousemove', this._moveHandler);
-		this.container.removeEventListener('mouseup',   this._upHandler);
+		this.container.removeEventListener('pointerdown', this._downHandler);
+		this.container.removeEventListener('pointermove', this._moveHandler);
+		this.container.removeEventListener('pointerup',   this._upHandler);
 	}
 
-	reset() {
-		this._resetPeripherals();
+	resetGrid() {
+		this._resetCanvas();
 		this.selected = []
-		this._drawing = true;
+		this._drawing = false;
 		for (let dot of this.container.querySelectorAll('.dot-div')) {
 			dot.classList.remove('selected')
 		}
 	}
-	_resetPeripherals(results=true) {
+	_resetCanvas() {
 		try {
 			const canvas = this.getCanvas();
 			const ctx = canvas.getContext('2d');
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			
-			if (results) {
-				this.resultSpan.innerHTML = "";
-				this.resultSpan.classList.remove('copied');
-			}
 		} catch {};
 	}
-	destroy() {
-		this._detachEvents();
-		this._reset();
+	_resetResults() {
+		if (results) {
+			this.resultSpan.innerHTML = "";
+			this.resultSpan.classList.remove('copied');
+		}
 	}
 
 	// dot interface -----------------------------------------
@@ -124,8 +124,10 @@ class PatternLock {
 	// events ----------------------------
 	mouseDown(e) {
 		let dot = this.getHitDot(e.clientX, e.clientY);
+		this.resetGrid();
+		this._drawing = dot != null;
 		if (dot) {
-			this.reset();
+			this._resetResults();
 			this.addDot(dot);
 		}
 	}
@@ -140,7 +142,6 @@ class PatternLock {
 		if (!this._drawing) return;
 		this._drawing = false;
 		this.printDots();
-		// this._reset();
 	}
 
 	
@@ -225,18 +226,6 @@ class PatternLock {
 			addContent = '<span class="colon">:</span>' + addContent;
 		}
 		this.resultSpan.innerHTML += addContent;
-		if (first) {
-			// resultsContainer.style.transition = "width 1s ease-out";
-			resultsContainer.style.width = 'auto';
-			return;
-		}
-		
-		const currWidth = resultsContainer.offsetWidth;
-		resultsContainer.style.width = currWidth + "px";
-		resultsContainer.offsetWidth; // essential line? - forces a reflow
-		// Let the browser calculate the new width
-		resultsContainer.style.transition = "width 0.5s ease";
-		resultsContainer.style.width = resultsContainer.scrollWidth - 20 + "px";
 	}
 	copyPatternResult() {
 		let text = this.resultSpan.textContent;
@@ -250,5 +239,16 @@ class PatternLock {
 };
 
 addEventListener("DOMContentLoaded", (event) => {
+	const params = new URLSearchParams(window.location.search);
+
 	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
-})
+	const size = params.get('size');
+	if (size) lock.setSize(size);
+
+	const shape = params.get('shape');
+	if(shape && shapeFuncs[shape]) {
+		console.log('selecting shape:', shape)
+		const shapeE = document.querySelector(`div.shape[shape-func=${shape}]`);
+		shapeE.onclick();
+	}
+});

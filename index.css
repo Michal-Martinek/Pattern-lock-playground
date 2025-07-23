@@ -1,12 +1,3 @@
-body {
-	text-align: center;
-	display: flex;
-	justify-content: center;
-	margin: 0;
-	background: linear-gradient(to bottom, rgb(145, 213, 218), rgb(24, 40, 119));
-	font-family: Verdana, Geneva, Tahoma, sans-serif;
-	overflow-y: hidden;
-}
 a {
 	text-decoration: none;
 	color: rgb(23, 19, 249);
@@ -51,7 +42,7 @@ a:hover {
 	
 	background: linear-gradient(red, orange, yellow); /* default background */
 	background: conic-gradient(from var(--angle), red, blue, green, yellow, orange, red);
-	animation: rotate 6s infinite linear;
+	animation: rotate var(--no-animations, 6s) infinite linear;
 }
 @keyframes glow {
 	from {
@@ -65,32 +56,57 @@ a:hover {
 	filter: blur(.8rem);
 	padding: 8px;
 	opacity: 0.8;
-	animation: glow 2.5s ease-in-out infinite alternate, rotate 6s infinite linear;
+	animation: glow var(--no-animations, 2.5s) ease-in-out infinite alternate, rotate var(--no-animations, 6s) infinite linear;
 }
-
-/* ------------------------ */
-#gradient-border {
-	width: 70%;
-	margin-top: 2%;
-	padding: 5px;
-	padding-bottom: 0;
-	border-radius: 20px 20px 0 0;
-	background: linear-gradient(to bottom, rgb(255, 242, 0), red);
+@media (prefers-reduced-motion) {
+	body {
+		--no-animations: 0s;
+	}
+}
+.disable-animations {
+	--no-animations: 0s;
+}
+/* TOP LEVEL ELEMENTS ------------------------ */
+html, body {
+	min-height: 100dvh;
+	margin: 0;
+}
+body {
+	text-align: center;
+	font-size: clamp(1rem, 1vw + .75rem, 1.5rem);
+	/* TODO properly scale font-size */
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+	overflow-y: scroll;
+}
+@media (min-width: 540px) and (orientation: landscape) {
+	body {	
+		display: flex;
+		justify-content: center;
+		background: linear-gradient(to bottom, rgb(145, 213, 218), rgb(24, 40, 119));
+		background-attachment: fixed;
+	}
+	#gradient-border {
+		width: 70vw;
+		min-height: min-content;
+		margin-top: 2dvh;
+		padding: 5px;
+		padding-bottom: 0;
+		border-radius: 20px 20px 0 0;
+		background: linear-gradient(to bottom, rgb(255, 242, 0), red);
+	}
 }
 #main-wrapper {
-	height: 100%;
-	/* border: 3px solid #111; */
+	min-height: 100%;
 	border-radius: 15px 15px 0 0;
+	box-sizing: border-box;
 	
 	background: #c1e4f1;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
-	/* background: #d7fd00; */
-	/* background: #c2e400; */
 }
 #content {
-	padding: 20px;
+	padding: calc(.5rem + 3vw);
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -98,37 +114,69 @@ a:hover {
 	/* overflow-y: auto; /* if it doesnt fit vertically - hide footer*/
 	user-select: none;
 }
+#content * {
+	max-width: 100%;
+}
+
 footer {
 	width: 100%;
-	/* height: 8%; */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: max(5px, 2%);
+
 	border-top: 3px solid red;
 	background-color: rgba(0, 255, 0, 0.249);
 	background: linear-gradient(to right, red, yellow, red);
 	padding: 15px 0;
 }
+#footer-icon {
+	height: 1.5em;
+	padding: 2px;
+	background-color: rgba(255, 255, 255, 0.936);
+	border-radius: 7px;
+}
+button.toggle-anim {
+	font-size: 0.8em;
+	background-color: rgb(81, 254, 81);
+	color: rgb(52, 52, 52);
+	border-radius: 5px;
+}
+	.disable-animations button.toggle-anim {
+		background-color: rgba(255, 0, 106, 0.5);
+	}
+	.toggle-anim::after {
+		content: '!';
+		font-weight: bold;
+	}
+	.disable-animations .toggle-anim::after {
+		content: '?';
+}
+
 /* PATTERN SELECTION ---------------------------- */
 #pattern-selection {
 	display: flex;
 	justify-content: left;
 	flex-direction: row;
-	align-items: center;
-	gap: 20px;
+	gap: clamp(5px, 3vw, 40px);
+	touch-action: manipulation;
 }
 #shapes {
 	display: flex;
 	align-content: center;
-	gap: 5px;
+	flex-wrap: wrap;
+	gap: .3em;
 }
 .shape, #size {
+	height: clamp(25px, 5vw, 50px);
 	border-radius: 8px;
 	border: 2px solid blue;
 	color: blue;
 	background-color: rgba(0, 255, 217, 0.1);
+	padding: 4px;
 }
 .shape {
-	width: 30px;
 	aspect-ratio: 1;
-	padding: 4px;
 	cursor: pointer;
 }
 .shape.selected {
@@ -141,13 +189,12 @@ footer {
 	flex-direction: row;
 	justify-content: space-evenly;
 	align-items: center;
-	height: 100%;
-	box-sizing: border-box;
 	aspect-ratio: 2;
-	padding: 5px 0;
+	padding-left: unset;
+	padding-right: unset;
 	font-weight: bold;
 }
-#size-number {
+#size-box {
 	border-left:  blue 1.5px solid;
 	border-right: blue 1.5px solid;
 	width: 37%;
@@ -157,10 +204,10 @@ footer {
 /* --------------- */
 #pattern-table {
 	position: relative;
-	width: 60%;
+	width: clamp(200px, 60%, 90vw);
 	aspect-ratio: 1;
-	margin: 4vh 0;
-	/* border: 1px solid #000; */
+	margin: max(25px, 4vw) 0;
+	touch-action: none;
 	border-radius: 8px;
 	background-color: #ddd;
 }
@@ -183,15 +230,16 @@ canvas#lines {
 }
 .lock-cell {
 	aspect-ratio: 1;
-	align-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 .dot-div {
-	width: 8%;
-	height: 8%;
-	padding: 6px;
+	width: 8%; /* inner dot size */
+	padding: min(3vw, 30%); /* outer "click margin" */
+	aspect-ratio: 1;
 	/* background-color: grey; */
 	border-radius: 50%;
-	justify-self: center;
 }
 .dummy-pattern .dot-div {
 	padding: 0;
@@ -201,7 +249,7 @@ canvas#lines {
 .dot-div:hover {
 	cursor: pointer;
 }
-.dot-div.selected {
+.dot-div.selected div {
 	transform: scale(1.3);
 	transition: .2s;
 }
@@ -209,11 +257,14 @@ canvas#lines {
 	width: 100%;
 	min-width: 5px;
 	aspect-ratio: 1;
+	flex-shrink: 0;
+	flex-grow: 0;
 	border-radius: 50%;
 	background-color: black;
 }
 .dummy-pattern .dot-div div {
 	background-color: blue;
+	min-width: 3px;
 }
 
 /* results div ---------------- */
@@ -221,9 +272,9 @@ canvas#lines {
 	padding: 8px;
 	margin-top: 15px;
 	max-width: 80%;
+	gap: .7ch;
 
 	text-align: left;
-	white-space: nowrap;
 	position: relative;
 }
 #results::before {
@@ -276,16 +327,22 @@ canvas#lines {
 	filter: blur(3px);
 	background: black;
 	background: conic-gradient(from var(--angle), red, blue, green, yellow, orange, red);
-	animation: rotate 1s infinite linear reverse,
-		alternate 8s infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
-		orbit 5s infinite linear;
+	animation: rotate var(--no-animations, 1s) infinite linear reverse,
+		alternate var(--no-animations, 8s) infinite traceBehindBox cubic-bezier(0.68,-0.55,0.27,1.55),
+		orbit var(--no-animations, 5s) infinite linear;
+}
+.disable-animations #results::after {
+	display: none;
+}
+.result-header {
+	font-weight: bold;
 }
 #pattern-result {
 	min-width: 3ch;
 	display: inline-block;
 	cursor: pointer;
 	transition: color 2s ease-in;
-	text-wrap: wrap;
+	width: fit-content;
 }
 #pattern-result.copied {
 	color: green;
@@ -320,4 +377,20 @@ canvas#lines {
 .dot-repr:last-child {
 	position: relative;
 	animation: forwards ease-out 1s fadeFromRight;
+}
+
+/* small display devices ---------------- */
+@media (width < 10cm) {
+	body {
+		font-size: 3vw;
+	}
+	.shape, #size {
+		height: calc(11vw - 10px);
+	}
+	#pattern-table {
+		width: 80vw;
+	}
+	footer {
+		font-size: 4.5vw;
+	}
 }
