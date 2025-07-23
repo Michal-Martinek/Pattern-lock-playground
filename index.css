@@ -66,13 +66,6 @@ a:hover {
 .disable-animations {
 	--no-animations: 0s;
 }
-button.toggle-anim {
-	font-size: .8rem;
-	background-color: rgba(255, 0, 106, 0.5);
-	color: rgb(52, 52, 52);
-	border-radius: 5px;
-}
-
 /* TOP LEVEL ELEMENTS ------------------------ */
 html, body {
 	min-height: 100dvh;
@@ -143,6 +136,23 @@ footer {
 	background-color: rgba(255, 255, 255, 0.936);
 	border-radius: 7px;
 }
+button.toggle-anim {
+	font-size: 0.8em;
+	background-color: rgb(81, 254, 81);
+	color: rgb(52, 52, 52);
+	border-radius: 5px;
+}
+	.disable-animations button.toggle-anim {
+		background-color: rgba(255, 0, 106, 0.5);
+	}
+	.toggle-anim::after {
+		content: '!';
+		font-weight: bold;
+	}
+	.disable-animations .toggle-anim::after {
+		content: '?';
+}
+
 /* PATTERN SELECTION ---------------------------- */
 #pattern-selection {
 	display: flex;
@@ -194,7 +204,7 @@ footer {
 /* --------------- */
 #pattern-table {
 	position: relative;
-	width: min(90vw, max(200px, 60%));
+	width: clamp(200px, 60%, 90vw);
 	aspect-ratio: 1;
 	margin: max(25px, 4vw) 0;
 	touch-action: none;
@@ -367,4 +377,20 @@ canvas#lines {
 .dot-repr:last-child {
 	position: relative;
 	animation: forwards ease-out 1s fadeFromRight;
+}
+
+/* small display devices ---------------- */
+@media (width < 10cm) {
+	body {
+		font-size: 3vw;
+	}
+	.shape, #size {
+		height: calc(11vw - 10px);
+	}
+	#pattern-table {
+		width: 80vw;
+	}
+	footer {
+		font-size: 4.5vw;
+	}
 }
