@@ -11,8 +11,8 @@ a:hover {
 
 .rainbow-text {
 	background: linear-gradient(to right, #f00,#f00,#ffb300,#ffb300, #e6e206, #f9a825, #ff5722);
-	background-clip: text;
 	-webkit-background-clip: text;
+	background-clip: text;
   	-webkit-text-fill-color: transparent;
 }
 
@@ -379,8 +379,8 @@ canvas#lines {
 	animation: forwards ease-out 1s fadeFromRight;
 }
 
-/* small display devices ---------------- */
-@media (width < 10cm) {
+/* make content fill width on small display devices ---------------- */
+@media (max-width: 480px) {
 	body {
 		font-size: 3vw;
 	}
