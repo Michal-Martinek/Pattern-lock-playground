@@ -9,6 +9,9 @@ const shapeFuncs = {
 	"hourglass":(rows, row) => Math.max(row + 1, rows - row),
 };
 
+function setCookie(name, val, duration=7) {
+	Cookies.set(name, val, {expires: duration});
+}
 class PatternLock {
 	constructor(container, rows, shapeFunc=shapeFuncs["square"], dummy=false) {
 		this.container = container;
@@ -30,18 +33,21 @@ class PatternLock {
 		this.resetGrid();
 	}
 	selectShape(selected) {
-		const shapeFunc = shapeFuncs[selected.getAttribute('shape-func')];
+		const shapeName = selected.getAttribute('shape-func')
+		const shapeFunc = shapeFuncs[shapeName];
 		if (shapeFunc == this.shapeFunc) return;
 		document.querySelectorAll('.shape').forEach((shape) => {
 			shape.classList.remove('selected');
 		})
 		selected.classList.add('selected');
 		this.init(this.rows, shapeFunc);
+		setCookie('shape', shapeName);
 	}
 	setSize(rows) {
 		if (rows != this.rows) {
 			document.querySelector('#size-number').innerHTML = rows;
 			this.init(rows, this.shapeFunc);
+			setCookie('size', rows);
 		}
 	}
 	changeSize(diff) {
@@ -238,17 +244,20 @@ class PatternLock {
 	}
 };
 
-addEventListener("DOMContentLoaded", (event) => {
+function parseParams(lock) {
 	const params = new URLSearchParams(window.location.search);
-
-	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
-	const size = params.get('size');
+	
+	const size = Number(params.get('size') || Cookies.get('size'));
 	if (size) lock.setSize(size);
-
-	const shape = params.get('shape');
-	if(shape && shapeFuncs[shape]) {
+	
+	const shape = params.get('shape') || Cookies.get('shape');
+	if (shape && shapeFuncs[shape]) {
 		console.log('selecting shape:', shape)
 		const shapeE = document.querySelector(`div.shape[shape-func=${shape}]`);
 		shapeE.onclick();
 	}
+}
+addEventListener("DOMContentLoaded", (event) => {
+	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
+	parseParams(lock);
 });
