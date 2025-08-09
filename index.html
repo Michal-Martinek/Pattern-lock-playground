@@ -52,7 +52,7 @@
 					<img id="footer-icon" src="favicon.svg" alt="icon">
 					<span>Michal Martínek 2025</span>
 					<button class="toggle-anim" type="button"
-						onclick="document.documentElement.classList.toggle('disable-animations')"
+						onclick="setAnimations(!!document.body.classList.contains('disable-animations'))"
 					>Animations</button>
 				</footer>
 			</div>

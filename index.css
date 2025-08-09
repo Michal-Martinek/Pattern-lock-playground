@@ -58,11 +58,6 @@ a:hover {
 	opacity: 0.8;
 	animation: glow var(--no-animations, 2.5s) ease-in-out infinite alternate, rotate var(--no-animations, 6s) infinite linear;
 }
-@media (prefers-reduced-motion) {
-	body {
-		--no-animations: 0s;
-	}
-}
 .disable-animations {
 	--no-animations: 0s;
 }

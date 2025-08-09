@@ -244,6 +244,15 @@ class PatternLock {
 	}
 };
 
+function setAnimations(allowed) {
+	if (allowed) {
+		document.body.classList.remove('disable-animations');
+		Cookies.remove('disable-animations');
+	} else {
+		document.body.classList.add('disable-animations');
+		setCookie('disable-animations', true);
+	}
+}
 function parseParams(lock) {
 	const params = new URLSearchParams(window.location.search);
 	
@@ -256,6 +265,9 @@ function parseParams(lock) {
 		const shapeE = document.querySelector(`div.shape[shape-func=${shape}]`);
 		shapeE.onclick();
 	}
+	
+	const isReducedMotion = window.matchMedia(`(prefers-reduced-motion: reduce)`) === true || window.matchMedia(`(prefers-reduced-motion: reduce)`).matches === true;
+	setAnimations(!isReducedMotion && Cookies.get('disable-animations') == undefined);
 }
 addEventListener("DOMContentLoaded", (event) => {
 	let lock = new PatternLock(document.querySelector('#pattern-table'), 3);
